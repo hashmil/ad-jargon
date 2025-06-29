@@ -3,6 +3,8 @@ import OpenAI from 'openai';
 import { TranslationRequest, TranslationResponse } from '@/types/translator';
 import { fallbackTranslation } from '@/lib/translator';
 
+export const runtime = 'edge';
+
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
