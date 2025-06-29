@@ -1,18 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 import { TranslationRequest, TranslationResponse } from '@/types/translator';
 import { fallbackTranslation } from '@/lib/translator';
 
 export const runtime = 'edge';
-
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "https://ad-jargon-translator.vercel.app",
-    "X-Title": "Ad Agency Jargon Translator",
-  },
-});
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,34 +17,46 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Try AI translation first
-      const completion = await openai.chat.completions.create({
-        model: "mistralai/mistral-small-3.2-24b-instruct:free",
-        messages: [
-          {
-            role: "user",
-            content: `Transform this normal business statement into hilariously over-the-top advertising agency jargon. Make it as buzzword-heavy and pretentious as possible, using terms like "synergise," "ideate," "paradigm," "holistic," "leverage," "circle back," "move the needle," etc. The goal is to satirise corporate speak. Use British English spelling throughout (e.g., "optimise," "realise," "colour," "centre"):
+      // Try AI translation first using direct fetch
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://ad-jargon-translator.pages.dev',
+          'X-Title': 'Ad Agency Jargon Translator',
+        },
+        body: JSON.stringify({
+          model: 'mistralai/mistral-small-3.2-24b-instruct:free',
+          messages: [
+            {
+              role: 'user',
+              content: `Transform this normal business statement into hilariously over-the-top advertising agency jargon. Make it as buzzword-heavy and pretentious as possible, using terms like "synergise," "ideate," "paradigm," "holistic," "leverage," "circle back," "move the needle," etc. The goal is to satirise corporate speak. Use British English spelling throughout (e.g., "optimise," "realise," "colour," "centre"):
 
 "${text.trim()}"
 
 Respond with ONLY the translated jargon version, no explanation.`
-          }
-        ],
-        max_tokens: 200,
-        temperature: 0.8
+            }
+          ],
+          max_tokens: 200,
+          temperature: 0.8
+        })
       });
 
-      const aiTranslation = completion.choices[0]?.message?.content?.trim();
-      
-      if (aiTranslation && aiTranslation.length > 0) {
-        return NextResponse.json({
-          success: true,
-          translatedText: aiTranslation,
-          method: 'ai'
-        } as TranslationResponse);
+      if (response.ok) {
+        const data = await response.json();
+        const aiTranslation = data.choices?.[0]?.message?.content?.trim();
+        
+        if (aiTranslation && aiTranslation.length > 0) {
+          return NextResponse.json({
+            success: true,
+            translatedText: aiTranslation,
+            method: 'ai'
+          } as TranslationResponse);
+        }
       }
 
-      throw new Error('Empty AI response');
+      throw new Error('AI API request failed');
     } catch (aiError) {
       console.log('AI translation failed, using fallback:', aiError);
       
