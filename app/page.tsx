@@ -22,7 +22,7 @@ export default function Home() {
     setState(prev => ({ 
       ...prev, 
       isLoading: true, 
-      agencyText: '🤖 Synergizing your ideation through our AI-powered disruption engine...', 
+      agencyText: '🤖 Synergising your ideation through our AI-powered disruption engine...', 
       error: undefined 
     }));
 
