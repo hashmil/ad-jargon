@@ -1,103 +1,161 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { ArrowRight, Zap, Coffee, Lightbulb } from 'lucide-react';
+import { TranslationState } from '@/types/translator';
+import { examplePhrases } from '@/lib/translator';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [state, setState] = useState<TranslationState>({
+    normalText: '',
+    agencyText: '',
+    isLoading: false,
+    error: undefined
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const translateToAgencySpeak = async (text: string) => {
+    if (!text.trim()) {
+      setState(prev => ({ ...prev, agencyText: '', error: undefined }));
+      return;
+    }
+
+    setState(prev => ({ 
+      ...prev, 
+      isLoading: true, 
+      agencyText: '🤖 Synergizing your ideation through our AI-powered disruption engine...', 
+      error: undefined 
+    }));
+
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: text.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setState(prev => ({ 
+          ...prev, 
+          agencyText: data.translatedText, 
+          isLoading: false 
+        }));
+      } else {
+        throw new Error(data.error || 'Translation failed');
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+      setState(prev => ({ 
+        ...prev, 
+        agencyText: '', 
+        isLoading: false,
+        error: 'Failed to translate. Please try again.' 
+      }));
+    }
+  };
+
+  const handleExampleClick = (example: string) => {
+    setState(prev => ({ ...prev, normalText: example, agencyText: '', error: undefined }));
+  };
+
+  const handleInputChange = (text: string) => {
+    setState(prev => ({ ...prev, normalText: text }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Zap className="text-yellow-400 w-8 h-8" />
+            <h1 className="text-4xl font-bold text-white">Ad Agency Jargon Translator</h1>
+            <Coffee className="text-yellow-400 w-8 h-8" />
+          </div>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Transform normal human speech into mind-blowing agency buzzword brilliance! 
+            Perfect for impressing clients and confusing colleagues.
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Main Translator */}
+        <div className="max-w-4xl mx-auto">
+          <div className="grid gap-6 mb-8">
+            {/* Input Box */}
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <div className="flex items-center gap-2 mb-4">
+                <Lightbulb className="text-blue-400 w-5 h-5" />
+                <h2 className="text-xl font-semibold text-white">Normal Human Speech</h2>
+              </div>
+              <textarea
+                value={state.normalText}
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder="Type something normal like 'Let's brainstorm some ideas'..."
+                className="w-full h-32 p-4 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+            </div>
+
+            {/* Generate Button */}
+            <div className="flex justify-center">
+              <button
+                onClick={() => translateToAgencySpeak(state.normalText)}
+                disabled={!state.normalText.trim() || state.isLoading}
+                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 disabled:hover:scale-100 transition-all duration-200 flex items-center gap-3"
+              >
+                <Zap className="w-5 h-5" />
+                {state.isLoading ? 'Generating...' : 'Generate Agency Magic'}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Output Box */}
+            <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-400/30">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="text-yellow-400 w-5 h-5" />
+                <h2 className="text-xl font-semibold text-white">Agency Buzzword Magic</h2>
+              </div>
+              <div className="w-full h-40 p-4 bg-black/20 border border-purple-400/30 rounded-lg text-white overflow-y-auto">
+                {state.error ? (
+                  <span className="text-red-400">{state.error}</span>
+                ) : state.agencyText ? (
+                  state.agencyText
+                ) : (
+                  <span className="text-gray-400 italic">
+                    Click &quot;Generate Agency Magic&quot; to transform your text into synergistic ideation...
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+
+          {/* Examples */}
+          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+            <h3 className="text-lg font-semibold text-white mb-4">Try These Examples:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {examplePhrases.map((phrase, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleExampleClick(phrase)}
+                  className="text-left p-3 bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 text-gray-300 hover:text-white transition-all duration-200"
+                >
+                  &quot;{phrase}&quot;
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center mt-8">
+            <p className="text-gray-400 text-sm">
+              Warning: Prolonged exposure to agency jargon may cause involuntary eye-rolling and the urge to &quot;circle back offline.&quot;
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
