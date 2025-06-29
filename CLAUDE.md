@@ -49,3 +49,25 @@ The application uses a hybrid approach:
 - **Server-Side Translation**: API routes handle external API calls to avoid CORS issues
 - **Graceful Degradation**: Fallback translation ensures functionality without AI
 - **TypeScript Strict Mode**: Ensures type safety across the application
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` folder:
+
+### Essential Reading
+- **docs/README.md** - Documentation overview and navigation
+- **docs/architecture.md** - Complete system architecture and design decisions
+- **docs/api.md** - Full API reference including translation endpoints
+- **docs/development.md** - Development setup, coding standards, and best practices
+
+### Quick References
+- **docs/quick-start.md** - 5-minute setup guide for new developers
+- **docs/troubleshooting.md** - Common issues and debugging techniques
+- **docs/faq.md** - Frequently asked questions and answers
+
+### Deployment
+- **docs/deployment-cloudflare.md** - Production deployment to Cloudflare Pages
+- **docs/deployment-vercel.md** - Alternative Vercel deployment guide
+
+### Project Context
+This is a satirical application designed to parody corporate buzzword culture. When working on features, maintain the humorous intent while ensuring professional code quality. The application uses British English spelling throughout (optimise, colour, realise) for consistency.

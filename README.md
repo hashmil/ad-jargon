@@ -2,6 +2,8 @@
 
 A satirical web application that transforms normal business language into hilariously over-the-top advertising agency buzzwords. Perfect for impressing clients and confusing colleagues!
 
+**🎭 [Try it live!](https://ad-jargon.pages.dev)** | **📚 [Documentation](./docs/README.md)** | **🐛 [Report Issues](https://github.com/hashmil/ad-jargon/issues)**
+
 ## ✨ Features
 
 - **AI-Powered Translation**: Uses Mistral AI via OpenRouter for authentic jargon generation
@@ -26,33 +28,18 @@ Transform phrases like:
 - **Icons**: Lucide React
 - **Deployment**: Optimised for Cloudflare Pages
 
-## 🏃‍♂️ Getting Started
+## 🚀 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/hashmil/ad-jargon.git
-   cd ad-jargon
-   ```
+```bash
+# Get started in 30 seconds
+git clone https://github.com/hashmil/ad-jargon.git
+cd ad-jargon
+npm install
+echo "OPENROUTER_API_KEY=your_key_here" > .env.local
+npm run dev
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.local.example .env.local
-   # Add your OpenRouter API key
-   OPENROUTER_API_KEY=your_api_key_here
-   ```
-
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-   Visit [http://localhost:3000](http://localhost:3000) to see the magic happen!
+**📖 [Full Setup Guide](./docs/quick-start.md)** | **⚡ [5-Minute Tutorial](./docs/quick-start.md#5-minute-local-setup)**
 
 ## 📝 Development Commands
 
@@ -78,20 +65,9 @@ The app uses a hybrid approach for maximum reliability:
 
 ## 🌍 Deployment
 
-### Cloudflare Pages (Recommended)
-1. Connect your GitHub repository to Cloudflare Pages
-2. Use these build settings:
-   - **Framework**: Next.js
-   - **Build command**: `npm run build`
-   - **Build output**: `.next`
-3. Add environment variable: `OPENROUTER_API_KEY`
+**🔥 [Cloudflare Pages Guide](./docs/deployment-cloudflare.md)** (Recommended - Free tier includes 500 builds/month, unlimited bandwidth)
 
-### Other Platforms
-The app works on any platform supporting Next.js:
-- Vercel
-- Netlify  
-- Railway
-- Digital Ocean
+**Alternative platforms**: [Vercel](./docs/deployment-vercel.md) | [Self-hosting](./docs/deployment-selfhost.md) | [CI/CD Setup](./docs/cicd.md)
 
 ## 🔑 Environment Variables
 
@@ -106,13 +82,21 @@ The translator uses OpenRouter's free tier:
 - **Cost**: Free (rate limited)
 - **Fallback**: Always available rule-based system
 
+## 📚 Documentation
+
+| Guide | Description |
+|-------|-------------|
+| **[Quick Start](./docs/quick-start.md)** | Get running in 5 minutes |
+| **[Architecture](./docs/architecture.md)** | System design and components |
+| **[API Reference](./docs/api.md)** | Complete API documentation |
+| **[Development](./docs/development.md)** | Coding standards and setup |
+| **[Deployment](./docs/deployment-cloudflare.md)** | Production deployment guide |
+| **[Troubleshooting](./docs/troubleshooting.md)** | Common issues and solutions |
+| **[FAQ](./docs/faq.md)** | Frequently asked questions |
+
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+**[📖 Contributing Guide](./docs/contributing.md)** | **[🐛 Report Bug](https://github.com/hashmil/ad-jargon/issues)** | **[💡 Request Feature](https://github.com/hashmil/ad-jargon/issues)**
 
 ## ⚠️ Disclaimer
 
