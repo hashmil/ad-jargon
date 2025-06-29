@@ -7,7 +7,7 @@ A satirical web application that transforms normal business language into hilari
 ## ✨ Features
 
 - **AI-Powered Translation**: Uses Mistral AI via OpenRouter for authentic jargon generation
-- **Intelligent Fallback**: Rule-based translation system ensures functionality without AI
+- **Retry Logic**: Automatic retry mechanism with user feedback for failed translations
 - **British English**: Proper spelling throughout (optimise, realise, colour, centre)
 - **Responsive Design**: Beautiful gradient UI with smooth animations
 - **Example Phrases**: Pre-loaded examples to get you started
@@ -51,16 +51,16 @@ npm run dev
 ## 🏗️ Architecture
 
 ### Translation System
-The app uses a hybrid approach for maximum reliability:
+The app uses AI-powered translation for authentic results:
 
-1. **AI-First**: OpenRouter API with Mistral model for creative, authentic jargon
-2. **Graceful Fallback**: Rule-based translation using predefined mappings
+1. **OpenRouter API**: Mistral model for creative, authentic jargon generation
+2. **Retry Logic**: Automatic retry mechanism (up to 2 attempts) for failed requests
 3. **Server-Side Processing**: API routes handle external calls to avoid CORS
 
 ### Key Components
 - `app/page.tsx` - Main translator interface
 - `app/api/translate/route.ts` - Translation API endpoint
-- `lib/translator.ts` - Fallback logic and jargon mappings
+- `lib/translator.ts` - Example phrases and type definitions
 - `types/translator.ts` - TypeScript interfaces
 
 ## 🌍 Deployment
@@ -80,7 +80,7 @@ The app uses a hybrid approach for maximum reliability:
 The translator uses OpenRouter's free tier:
 - **Model**: `mistralai/mistral-small-3.2-24b-instruct:free`
 - **Cost**: Free (rate limited)
-- **Fallback**: Always available rule-based system
+- **Reliability**: Built-in retry logic for failed requests
 
 ## 📚 Documentation
 

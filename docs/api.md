@@ -11,7 +11,7 @@ The Ad Agency Jargon Translator provides a simple REST API for transforming norm
 
 ### POST /api/translate
 
-Translates normal business text into agency jargon using AI with fallback to rule-based translation.
+Translates normal business text into agency jargon using AI with automatic retry logic.
 
 #### Request
 
@@ -47,7 +47,7 @@ fetch('/api/translate', {
 {
   "success": true,
   "translatedText": string,
-  "method": "ai" | "fallback"
+  "method": "ai"
 }
 ```
 
@@ -71,12 +71,12 @@ fetch('/api/translate', {
 }
 ```
 
-**Fallback Translation:**
+**Retry Success:**
 ```json
 {
   "success": true,
-  "translatedText": "Let's action on synergistic blue-sky thinking to drive maximum ROI.",
-  "method": "fallback"
+  "translatedText": "Moving forward, we should leverage disruptive ideation to optimise our value proposition for scalable growth potential.",
+  "method": "ai"
 }
 ```
 

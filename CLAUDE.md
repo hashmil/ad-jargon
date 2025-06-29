@@ -28,9 +28,9 @@ This is an Ad Agency Jargon Translator - a satirical web application that transf
 - `app/api/` - API routes for server-side functionality
 
 ### Translation System
-The application uses a hybrid approach:
-1. **AI-First**: OpenRouter API with Mistral model for authentic jargon generation
-2. **Fallback**: Rule-based translation using predefined jargon mappings
+The application uses AI-powered translation:
+1. **OpenRouter API**: Uses Mistral model for authentic jargon generation
+2. **Retry Logic**: Automatically retries failed requests up to 2 times
 3. **API Integration**: Server-side API routes handle translation requests
 
 ### Environment Configuration
@@ -47,7 +47,7 @@ The application uses a hybrid approach:
 
 - **Turbopack**: Enabled for faster development builds
 - **Server-Side Translation**: API routes handle external API calls to avoid CORS issues
-- **Graceful Degradation**: Fallback translation ensures functionality without AI
+- **Retry Logic**: Built-in retry mechanism with user feedback for failed translations
 - **TypeScript Strict Mode**: Ensures type safety across the application
 
 ## Documentation
