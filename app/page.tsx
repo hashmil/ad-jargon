@@ -52,7 +52,7 @@ export default function Home() {
         ...prev, 
         agencyText: '', 
         isLoading: false,
-        error: 'Failed to translate. Please try again.' 
+        error: 'Translation failed. Please try again.' 
       }));
     }
   };
@@ -106,7 +106,7 @@ export default function Home() {
                 className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 disabled:hover:scale-100 transition-all duration-200 flex items-center gap-3"
               >
                 <Zap className="w-5 h-5" />
-                {state.isLoading ? 'Generating...' : 'Generate Agency Magic'}
+                {state.isLoading ? 'Ideating...' : 'Generate Agency Magic'}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
