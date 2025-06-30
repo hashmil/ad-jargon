@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Retry logic for OpenRouter API
     const maxRetries = 2;
-    let lastError: any;
+    let lastError: Error = new Error('Unknown error');
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
@@ -64,7 +64,7 @@ Respond with ONLY the translated jargon version, no explanation or surrounding q
 
         throw new Error(`AI API request failed with status: ${response.status}`);
       } catch (error) {
-        lastError = error;
+        lastError = error instanceof Error ? error : new Error(String(error));
         console.log(`AI translation attempt ${attempt} failed:`, error);
         
         if (attempt < maxRetries) {

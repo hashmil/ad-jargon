@@ -1,36 +1,37 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { ArrowRight, Zap, Coffee, Lightbulb } from 'lucide-react';
-import { TranslationState } from '@/types/translator';
-import { examplePhrases } from '@/lib/translator';
+import React, { useState } from "react";
+import { Zap } from "lucide-react";
+import { TranslationState } from "@/types/translator";
+import { examplePhrases } from "@/lib/translator";
 
 export default function Home() {
   const [state, setState] = useState<TranslationState>({
-    normalText: '',
-    agencyText: '',
+    normalText: "",
+    agencyText: "",
     isLoading: false,
-    error: undefined
+    error: undefined,
   });
 
   const translateToAgencySpeak = async (text: string) => {
     if (!text.trim()) {
-      setState(prev => ({ ...prev, agencyText: '', error: undefined }));
+      setState((prev) => ({ ...prev, agencyText: "", error: undefined }));
       return;
     }
 
-    setState(prev => ({ 
-      ...prev, 
-      isLoading: true, 
-      agencyText: '🤖 Synergising your ideation through our AI-powered disruption engine...', 
-      error: undefined 
+    setState((prev) => ({
+      ...prev,
+      isLoading: true,
+      agencyText:
+        "🤖 Synergising your ideation through our AI-powered disruption engine...",
+      error: undefined,
     }));
 
     try {
-      const response = await fetch('/api/translate', {
-        method: 'POST',
+      const response = await fetch("/api/translate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: text.trim() }),
       });
@@ -38,121 +39,127 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
-        setState(prev => ({ 
-          ...prev, 
-          agencyText: data.translatedText, 
-          isLoading: false 
+        setState((prev) => ({
+          ...prev,
+          agencyText: data.translatedText,
+          isLoading: false,
         }));
       } else {
-        throw new Error(data.error || 'Translation failed');
+        throw new Error(data.error || "Translation failed");
       }
     } catch (error) {
-      console.error('Translation error:', error);
-      setState(prev => ({ 
-        ...prev, 
-        agencyText: '', 
+      console.error("Translation error:", error);
+      setState((prev) => ({
+        ...prev,
+        agencyText: "",
         isLoading: false,
-        error: 'Translation failed. Please try again.' 
+        error: "Translation failed. Please try again.",
       }));
     }
   };
 
   const handleExampleClick = (example: string) => {
-    setState(prev => ({ ...prev, normalText: example, agencyText: '', error: undefined }));
+    setState((prev) => ({
+      ...prev,
+      normalText: example,
+      agencyText: "",
+      error: undefined,
+    }));
   };
 
   const handleInputChange = (text: string) => {
-    setState(prev => ({ ...prev, normalText: text }));
+    setState((prev) => ({ ...prev, normalText: text }));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#082026] via-[#134D80] to-[#97DDE8] relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+      <div className="container mx-auto px-6 relative z-10 min-h-screen flex flex-col">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Zap className="text-yellow-400 w-8 h-8" />
-            <h1 className="text-4xl font-bold text-white">Ad Agency Jargon Translator</h1>
-            <Coffee className="text-yellow-400 w-8 h-8" />
-          </div>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Transform normal human speech into mind-blowing agency buzzword brilliance! 
-            Perfect for impressing clients and confusing colleagues.
+        <div className="text-center py-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-white font-serif mb-3 leading-tight">
+            Ad Agency Jargon Translator
+          </h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+            Transform normal speech into agency buzzword brilliance
           </p>
         </div>
+        
+        {/* Main Content - Centered */}
+        <div className="flex-1 flex flex-col justify-center">
 
-        {/* Main Translator */}
-        <div className="max-w-4xl mx-auto">
-          <div className="grid gap-6 mb-8">
-            {/* Input Box */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-              <div className="flex items-center gap-2 mb-4">
-                <Lightbulb className="text-blue-400 w-5 h-5" />
-                <h2 className="text-xl font-semibold text-white">Normal Human Speech</h2>
+          {/* Main Translator */}
+          <div className="max-w-7xl mx-auto">
+          {/* Side-by-side Translator */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Input Section */}
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-white font-serif">
+                  Normal Speech
+                </h2>
+                <button
+                  onClick={() => translateToAgencySpeak(state.normalText)}
+                  disabled={!state.normalText.trim() || state.isLoading}
+                  className="px-4 py-2 bg-gradient-to-r from-[#FF5938] to-[#FFD1E2] hover:from-[#FF5938] hover:to-[#FF5938] disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-300 flex items-center gap-2 text-sm">
+                  <Zap className="w-4 h-4" />
+                  {state.isLoading ? "Translating..." : "Translate"}
+                </button>
               </div>
               <textarea
                 value={state.normalText}
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder="Type something normal like 'Let's brainstorm some ideas'..."
-                className="w-full h-32 p-4 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full h-48 p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 resize-none focus:outline-none focus:border-[#FFD1E2] transition-all duration-300 text-base"
               />
-            </div>
-
-            {/* Generate Button */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => translateToAgencySpeak(state.normalText)}
-                disabled={!state.normalText.trim() || state.isLoading}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 disabled:hover:scale-100 transition-all duration-200 flex items-center gap-3"
-              >
-                <Zap className="w-5 h-5" />
-                {state.isLoading ? 'Ideating...' : 'Generate Agency Magic'}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Output Box */}
-            <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-400/30">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="text-yellow-400 w-5 h-5" />
-                <h2 className="text-xl font-semibold text-white">Agency Buzzword Magic</h2>
+              
+              {/* Quick Examples */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-white/80 mb-2">Quick Examples:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {examplePhrases.map((phrase, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleExampleClick(phrase)}
+                      className="text-xs px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 text-white/80 hover:text-white transition-all duration-200 truncate max-w-[180px]">
+                      {phrase}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="w-full h-40 p-4 bg-black/20 border border-purple-400/30 rounded-lg text-white overflow-y-auto">
+            </div>
+
+            {/* Output Section */}
+            <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 flex flex-col">
+              <h2 className="text-xl font-semibold text-white font-serif mb-4">
+                Agency Buzzword Magic
+              </h2>
+              <div className="w-full flex-1 min-h-[300px] p-4 bg-gradient-to-br from-[#004A4A]/20 to-[#134D80]/20 border border-white/20 rounded-xl text-white overflow-y-auto">
                 {state.error ? (
-                  <span className="text-red-400">{state.error}</span>
+                  <div className="flex items-center justify-center h-full">
+                    <span className="text-red-300">{state.error}</span>
+                  </div>
                 ) : state.agencyText ? (
-                  state.agencyText
+                  <p className="text-base leading-relaxed">{state.agencyText}</p>
                 ) : (
-                  <span className="text-gray-400 italic">
-                    Click &quot;Generate Agency Magic&quot; to transform your text into synergistic ideation...
-                  </span>
+                  <div className="flex items-center justify-center h-full text-center">
+                    <span className="text-white/50 italic text-sm">
+                      Your agency buzzword transformation will appear here...
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
 
-          {/* Examples */}
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4">Try These Examples:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {examplePhrases.map((phrase, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleExampleClick(phrase)}
-                  className="text-left p-3 bg-white/10 hover:bg-white/20 rounded-lg border border-white/20 text-gray-300 hover:text-white transition-all duration-200"
-                >
-                  &quot;{phrase}&quot;
-                </button>
-              ))}
+            {/* Footer */}
+            <div className="text-center mt-8">
+              <p className="text-white/60 text-sm italic font-serif">
+                Warning: Prolonged exposure to agency jargon may cause involuntary eye-rolling and the urge to &quot;circle back offline.&quot;
+              </p>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center mt-8">
-            <p className="text-gray-400 text-sm">
-              Warning: Prolonged exposure to agency jargon may cause involuntary eye-rolling and the urge to &quot;circle back offline.&quot;
-            </p>
           </div>
         </div>
       </div>
