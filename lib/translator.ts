@@ -122,12 +122,8 @@ export function fallbackTranslation(text: string): string {
 }
 
 export const examplePhrases = [
-  "Let's think of some new ideas for this client",
-  "We need to discuss the budget",
-  "The deadline is next week",
+  "Let's think of some new ideas",
+  "We need to discuss the budget", 
   "This is an important project",
-  "We should work together on this",
-  "Let's have a meeting about the campaign",
-  "The client wants changes to the design",
-  "We need to show them our creative work"
+  "The deadline is next week"
 ];
