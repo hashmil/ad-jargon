@@ -8,7 +8,6 @@ A satirical web application that transforms normal business language into hilari
 
 - **AI-Powered Translation**: Uses Mistral AI via OpenRouter for authentic jargon generation
 - **Retry Logic**: Automatic retry mechanism with user feedback for failed translations
-- **British English**: Proper spelling throughout (optimise, realise, colour, centre)
 - **Responsive Design**: Beautiful gradient UI with smooth animations
 - **Example Phrases**: Pre-loaded examples to get you started
 - **Real-time Translation**: Instant buzzword transformation
