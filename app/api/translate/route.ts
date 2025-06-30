@@ -1,19 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TranslationRequest, TranslationResponse } from '@/types/translator';
+import { translateRateLimiter, getClientIdentifier } from '@/lib/rate-limiter';
+import { defaultValidator } from '@/lib/input-validator';
 
 export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
+  const clientId = getClientIdentifier(request);
+  const timestamp = new Date().toISOString();
+  
+  // Log request for monitoring
+  console.log(`[${timestamp}] Translation request from ${clientId}`);
+  
+  // Rate limiting check
+  const rateLimitResult = translateRateLimiter.check(clientId);
+  
   try {
-    const { text }: TranslationRequest = await request.json();
-
-    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+    if (!rateLimitResult.allowed) {
+      console.log(`[${timestamp}] Rate limit exceeded for ${clientId}`);
       return NextResponse.json({
         success: false,
-        error: 'Text is required',
+        error: 'Too many requests. Please try again later.',
+        translatedText: ''
+      } as TranslationResponse, { 
+        status: 429,
+        headers: {
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+          'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString()
+        }
+      });
+    }
+
+    const { text }: TranslationRequest = await request.json();
+
+    // Input validation
+    const validationResult = defaultValidator.validate(text);
+    if (!validationResult.isValid) {
+      console.log(`[${timestamp}] Invalid input from ${clientId}: ${validationResult.error}`);
+      return NextResponse.json({
+        success: false,
+        error: validationResult.error || 'Invalid input',
         translatedText: ''
       } as TranslationResponse, { status: 400 });
     }
+
+    const sanitizedText = validationResult.sanitizedText!;
 
     // Retry logic for OpenRouter API
     const maxRetries = 2;
@@ -36,7 +68,7 @@ export async function POST(request: NextRequest) {
                 role: 'user',
                 content: `Transform this normal business statement into hilariously over-the-top advertising agency jargon. Make it as buzzword-heavy and pretentious as possible, using terms like "synergise," "ideate," "paradigm," "holistic," "leverage," "circle back," "move the needle," etc. The goal is to satirise corporate speak. Use British English spelling throughout (e.g., "optimise," "realise," "colour," "centre"):
 
-"${text.trim()}"
+"${sanitizedText}"
 
 Respond with ONLY the translated jargon version, no explanation or surrounding quotes.`
               }
@@ -65,7 +97,7 @@ Respond with ONLY the translated jargon version, no explanation or surrounding q
         throw new Error(`AI API request failed with status: ${response.status}`);
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.log(`AI translation attempt ${attempt} failed:`, error);
+        console.log(`[${timestamp}] AI translation attempt ${attempt} failed for ${clientId}:`, error instanceof Error ? error.message : error);
         
         if (attempt < maxRetries) {
           // Brief delay before retry
@@ -75,14 +107,20 @@ Respond with ONLY the translated jargon version, no explanation or surrounding q
     }
     
     // All retries failed
+    console.log(`[${timestamp}] All translation attempts failed for ${clientId}`);
     throw lastError;
   } catch (error) {
-    console.error('Translation API error:', error);
+    console.error(`[${timestamp}] Translation API error for ${clientId}:`, error instanceof Error ? error.message : error);
     
     return NextResponse.json({
       success: false,
-      error: 'Failed to translate text',
+      error: 'Service temporarily unavailable. Please try again later.',
       translatedText: ''
-    } as TranslationResponse, { status: 500 });
+    } as TranslationResponse, { 
+      status: 500,
+      headers: {
+        'X-RateLimit-Remaining': rateLimitResult.remaining.toString()
+      }
+    });
   }
 }
