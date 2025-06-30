@@ -111,11 +111,10 @@ fetch('/api/translate', {
 - Includes British English spelling instructions
 - Timeout after reasonable period
 
-### 3. Fallback Translation (Secondary)
-- Activates if AI translation fails
-- Uses rule-based jargon mapping
-- Adds random buzzwords for enhancement
-- Always succeeds (guaranteed response)
+### 3. Retry Logic
+- Automatically retries failed AI requests up to 2 times
+- Provides user feedback during retry attempts
+- Returns error if all attempts fail
 
 ## 🤖 AI Integration Details
 
@@ -146,37 +145,21 @@ Respond with ONLY the translated jargon version, no explanation.
 - **Temperature**: 0.8 (creative but controlled)
 - **Model**: Mistral Small 3.2 24B Instruct (Free tier)
 
-## 🔧 Fallback System
+## 🔄 Retry System
 
-### Jargon Mappings
-The fallback system uses predefined mappings for common business terms:
+### Retry Logic
+The API implements automatic retry functionality:
 
-```typescript
-const jargonMap = {
-  'think': 'ideate',
-  'ideas': 'blue-sky thinking',
-  'new ideas': 'disruptive ideation',
-  'meeting': 'alignment session',
-  'plan': 'strategic roadmap',
-  'client': 'key stakeholder',
-  'budget': 'investment allocation',
-  'problem': 'opportunity space',
-  // ... 40+ more mappings
-}
-```
+1. **Initial Request**: First attempt to translate via AI
+2. **Retry on Failure**: Up to 2 additional attempts if the first fails
+3. **User Feedback**: Loading states show retry attempts in progress
+4. **Final Failure**: Returns error response if all attempts fail
 
-### Enhancement Process
-1. **Word Replacement**: Apply jargon mappings
-2. **Buzzword Injection**: Add random buzzwords (30% chance per word)
-3. **Prefix Addition**: Add agency prefix phrase
-4. **Suffix Addition**: Add agency suffix phrase
-5. **Capitalisation**: Proper sentence structure
-
-### Buzzword Categories
-- **Synergistic**: synergistic, holistic, disruptive
-- **Strategic**: innovative, cutting-edge, next-generation
-- **Performance**: scalable, agile, dynamic, mission-critical
-- **Quality**: best-in-class, world-class, enterprise-grade
+### Retry Scenarios
+- Network timeouts
+- API rate limiting
+- Temporary service unavailability
+- Invalid API responses
 
 ## 🔒 Security & Rate Limiting
 
@@ -205,13 +188,13 @@ const MAX_LENGTH = 1000; // characters
 
 ### Expected Response Times
 - **AI Translation**: 2-5 seconds
-- **Fallback Translation**: <100ms
+- **Retry Attempts**: Additional 2-5 seconds per retry
 - **Edge Runtime**: Global sub-50ms routing
 
 ### Performance Optimisations
 - **Edge Runtime**: Runs close to users globally
 - **Lightweight Implementation**: No heavy SDK dependencies
-- **Efficient Fallback**: Local processing when AI fails
+- **Smart Retry Logic**: Avoids unnecessary requests
 
 ## 🌍 British English Implementation
 
@@ -222,15 +205,8 @@ The AI is explicitly instructed to use British English spellings:
 - colour (not color)
 - centre (not center)
 
-### Fallback Consistency
-All fallback mappings use British spellings:
-```typescript
-{
-  'improve': 'optimise and iterate',
-  'sales': 'conversion optimisation',
-  'email': 'personalised touchpoint communication'
-}
-```
+### Consistency Across Features
+All AI-generated content uses British spellings consistently, ensuring a cohesive experience throughout the application.
 
 ## 🧪 Testing the API
 
@@ -287,7 +263,6 @@ def translate_text(text):
 ```javascript
 // Input: "Let's brainstorm some ideas"
 // AI Output: "Moving forward, we should leverage innovative thought-showers to optimise our disruptive ideation for next-level paradigm disruption."
-// Fallback Output: "Let's action on synergistic blue-sky thinking to drive maximum ROI."
 ```
 
 ### Complex Business Scenario
@@ -301,7 +276,7 @@ def translate_text(text):
 ### OpenRouter Free Tier
 - **Model**: Mistral Small 3.2 24B Instruct
 - **Limit**: Rate limited (exact limits vary)
-- **Fallback**: Always available when AI is unavailable
+- **Retry Logic**: Automatically handles temporary failures
 
 ### Cloudflare Pages Free Tier
 - **Requests**: 100,000 per day
@@ -330,7 +305,7 @@ def translate_text(text):
   "translatedText": ""
 }
 ```
-**Solution**: Server issue, try again later. Fallback should still work.
+**Solution**: Server issue, try again later. API will automatically retry up to 2 times.
 
 #### Network Timeout
 **Symptom**: Request takes >30 seconds
@@ -339,7 +314,7 @@ def translate_text(text):
 ### Debugging Tips
 1. **Check Request Format**: Ensure JSON is valid
 2. **Verify Content-Type**: Must be `application/json`
-3. **Test Fallback**: Should always work even if AI fails
+3. **Monitor Retries**: Watch for retry attempts in network tab
 4. **Monitor Console**: Check browser dev tools for errors
 
 ---
