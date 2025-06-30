@@ -6,41 +6,23 @@ Welcome to the comprehensive documentation for the Ad Agency Jargon Translator! 
 
 ### Getting Started
 - [**Quick Start Guide**](./quick-start.md) - Get up and running in 5 minutes
-- [**Installation**](./installation.md) - Detailed setup instructions
-- [**Environment Setup**](./environment.md) - Configure your development environment
+- [**Environment Variables**](./environment-variables.md) - Complete env var reference
 
 ### Architecture & Technical
 - [**Architecture Overview**](./architecture.md) - System design and component structure
 - [**API Documentation**](./api.md) - Complete API reference and translation system
-- [**Database & State**](./state-management.md) - How data flows through the application
-- [**Performance**](./performance.md) - Optimisation strategies and considerations
+- [**Security Guide**](./security-guide.md) - Security features and best practices
 
 ### Development
 - [**Development Guide**](./development.md) - Coding standards and best practices
 - [**Contributing**](./contributing.md) - How to contribute to the project
-- [**Testing**](./testing.md) - Testing strategies and guidelines
-- [**Code Style**](./code-style.md) - TypeScript and React conventions
 
 ### Deployment
 - [**Cloudflare Pages**](./deployment-cloudflare.md) - Deploy to Cloudflare Pages (recommended)
-- [**Vercel Deployment**](./deployment-vercel.md) - Alternative deployment to Vercel
-- [**Self-Hosting**](./deployment-selfhost.md) - Deploy to your own infrastructure
-- [**CI/CD**](./cicd.md) - Continuous integration and deployment
-
-### Features
-- [**Translation System**](./translation-system.md) - How the AI translation with retry logic works
-- [**UI Components**](./ui-components.md) - Component library and design system
-- [**Internationalisation**](./i18n.md) - British English implementation details
 
 ### Troubleshooting
 - [**Common Issues**](./troubleshooting.md) - Solutions to frequent problems
 - [**FAQ**](./faq.md) - Frequently asked questions
-- [**Error Codes**](./error-codes.md) - Understanding error messages
-
-### Reference
-- [**Configuration**](./configuration.md) - All configuration options
-- [**Environment Variables**](./environment-variables.md) - Complete env var reference
-- [**Changelog**](./changelog.md) - Version history and updates
 
 ## 🚀 Quick Links
 
@@ -56,7 +38,7 @@ Welcome to the comprehensive documentation for the Ad Agency Jargon Translator! 
 2. Read [Architecture Overview](./architecture.md) 
 3. Review [API Documentation](./api.md)
 4. Check [Development Guide](./development.md)
-5. Explore [Translation System](./translation-system.md)
+5. Review [Security Guide](./security-guide.md)
 
 ## 🎯 Key Concepts
 
