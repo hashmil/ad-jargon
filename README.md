@@ -4,6 +4,8 @@ A satirical web application that transforms normal business language into hilari
 
 **🎭 [Try it live!](https://ad-jargon.pages.dev)** | **📚 [Documentation](./docs/README.md)** | **🐛 [Report Issues](https://github.com/hashmil/ad-jargon/issues)**
 
+![Ad Agency Jargon Translator Screenshot](./public/ad-jargon-screenshot.png)
+
 ## ✨ Features
 
 - **AI-Powered Translation**: Uses Mistral AI via OpenRouter for authentic jargon generation
