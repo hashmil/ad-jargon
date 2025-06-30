@@ -8,7 +8,6 @@ This project exists to bring humour to the corporate world by satirising the rid
 
 - **Humour First**: The primary goal is entertainment and gentle mockery
 - **Quality Code**: Maintain professional standards even for satirical content
-- **British English**: Consistent spelling throughout (optimise, colour, realise)
 - **Accessibility**: Everyone should be able to enjoy corporate satire
 
 ## 🚀 Quick Contribution Start
@@ -42,9 +41,11 @@ git push origin feature/amazing-jargon-addition
 ## 📋 Types of Contributions
 
 ### 🐛 Bug Reports
+
 Help us identify issues with the translation engine or user experience:
 
 **Good Bug Report includes:**
+
 - Clear description of the problem
 - Steps to reproduce
 - Expected vs actual behaviour
@@ -52,38 +53,47 @@ Help us identify issues with the translation engine or user experience:
 - Screenshots if applicable
 
 **Bug Report Template:**
+
 ```markdown
 ## Bug Description
+
 Brief description of the issue
 
 ## Steps to Reproduce
+
 1. Go to...
 2. Type...
 3. Click...
 4. See error
 
 ## Expected Behaviour
+
 What should happen
 
 ## Actual Behaviour
+
 What actually happens
 
 ## Environment
+
 - OS: [e.g., macOS 13.0, Windows 11]
 - Browser: [e.g., Chrome 115, Firefox 117]
 - Node.js: [e.g., 18.17.0]
 ```
 
 ### 💡 Feature Requests
+
 Suggest new ways to enhance the satirical experience:
 
 **Good Feature Request includes:**
+
 - Clear use case description
 - Explanation of why it would be valuable
 - Possible implementation approach
 - Consideration of complexity
 
 **Feature Categories:**
+
 - **AI Prompt Improvements**: Better translation quality through prompt engineering
 - **UI Improvements**: Better user experience
 - **API Enhancements**: More translation options
@@ -93,6 +103,7 @@ Suggest new ways to enhance the satirical experience:
 ### 🔧 Code Contributions
 
 #### AI Prompt Improvements
+
 Help improve translation quality by enhancing the AI prompts:
 
 ```typescript
@@ -105,15 +116,18 @@ Help improve translation quality by enhancing the AI prompts:
 ```
 
 **Prompt Enhancement Guidelines:**
+
 - Should encourage hilariously over-the-top translations
 - Maintain British English spelling preferences
 - Enhance satirical tone through better context
 - Avoid prompts that could generate offensive content
 
 #### UI Enhancements
+
 Improve the user interface and experience:
 
 **Areas for improvement:**
+
 - Mobile responsiveness
 - Loading state animations
 - Error message clarity
@@ -121,9 +135,11 @@ Improve the user interface and experience:
 - Dark mode support
 
 #### API Improvements
+
 Enhance the AI translation system:
 
 **Possible enhancements:**
+
 - Support for different AI models
 - Retry logic with exponential backoff
 - Caching layer for common phrases
@@ -131,18 +147,22 @@ Enhance the AI translation system:
 - Better error handling and user feedback
 
 #### Performance Optimisations
+
 Make the application faster and more efficient:
 
 **Optimisation areas:**
+
 - Bundle size reduction
 - API response times
 - Image optimisation
 - Caching strategies
 
 ### 📚 Documentation
+
 Help improve project documentation:
 
 **Documentation needs:**
+
 - Tutorial improvements
 - API examples
 - Troubleshooting guides
@@ -152,11 +172,13 @@ Help improve project documentation:
 ## 🛠️ Development Setup
 
 ### Prerequisites
+
 - **Node.js 18+**: [Download here](https://nodejs.org/)
 - **Git**: [Download here](https://git-scm.com/)
 - **OpenRouter API Key**: [Get free key](https://openrouter.ai/)
 
 ### Local Development
+
 ```bash
 # Clone your fork
 git clone https://github.com/YOUR-USERNAME/ad-jargon.git
@@ -175,6 +197,7 @@ npm run dev
 ```
 
 ### Development Workflow
+
 1. **Create branch**: `git checkout -b feature/your-feature`
 2. **Make changes**: Edit files and test thoroughly
 3. **Quality checks**: Run linting and build tests
@@ -185,6 +208,7 @@ npm run dev
 ## 📏 Code Standards
 
 ### TypeScript Guidelines
+
 ```typescript
 // Use explicit interfaces
 interface TranslationOptions {
@@ -193,7 +217,9 @@ interface TranslationOptions {
 }
 
 // Prefer type-safe approaches
-const handleTranslation = async (options: TranslationOptions): Promise<TranslationResponse> => {
+const handleTranslation = async (
+  options: TranslationOptions
+): Promise<TranslationResponse> => {
   // Implementation
 };
 
@@ -202,26 +228,23 @@ try {
   const result = await translateText(input);
   return result;
 } catch (error) {
-  console.error('Translation failed:', error);
-  throw new Error('Translation service unavailable');
+  console.error("Translation failed:", error);
+  throw new Error("Translation service unavailable");
 }
 ```
 
 ### React Best Practices
+
 ```typescript
 // Functional components with hooks
 export function TranslationForm({ onSubmit }: TranslationFormProps) {
-  const [text, setText] = useState('');
-  
+  const [text, setText] = useState("");
+
   const handleSubmit = useCallback(() => {
     onSubmit(text);
   }, [text, onSubmit]);
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      {/* Component JSX */}
-    </form>
-  );
+
+  return <form onSubmit={handleSubmit}>{/* Component JSX */}</form>;
 }
 
 // Props with clear interfaces
@@ -231,6 +254,7 @@ interface TranslationFormProps {
 ```
 
 ### Styling Conventions
+
 ```typescript
 // Use TailwindCSS utilities
 <div className="max-w-4xl mx-auto px-4 py-8">
@@ -251,21 +275,25 @@ interface TranslationFormProps {
 ```
 
 ### API Route Guidelines
+
 ```typescript
 // Always use Edge Runtime
-export const runtime = 'edge';
+export const runtime = "edge";
 
 // Validate input thoroughly
 export async function POST(request: NextRequest) {
   const { text } = await request.json();
-  
-  if (!text || typeof text !== 'string' || text.trim().length === 0) {
-    return NextResponse.json({
-      success: false,
-      error: 'Text is required'
-    }, { status: 400 });
+
+  if (!text || typeof text !== "string" || text.trim().length === 0) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Text is required",
+      },
+      { status: 400 }
+    );
   }
-  
+
   // Implementation
 }
 ```
@@ -273,6 +301,7 @@ export async function POST(request: NextRequest) {
 ## 🧪 Testing Guidelines
 
 ### Manual Testing Checklist
+
 Before submitting a PR, verify:
 
 - [ ] **Functionality**: AI translation works with proper retry logic
@@ -284,6 +313,7 @@ Before submitting a PR, verify:
 - [ ] **Accessibility**: Keyboard navigation and screen readers
 
 ### Testing Commands
+
 ```bash
 # Development testing
 npm run dev           # Start dev server
@@ -329,6 +359,7 @@ git commit -m "test: add unit tests for AI translation retry logic"
 ## 🔍 Pull Request Process
 
 ### Before Submitting
+
 1. **Test thoroughly**: Manual testing on multiple devices
 2. **Code quality**: Run `npm run lint` and fix issues
 3. **Build check**: Ensure `npm run build` succeeds
@@ -336,11 +367,14 @@ git commit -m "test: add unit tests for AI translation retry logic"
 5. **Commits**: Clean, descriptive commit history
 
 ### PR Description Template
+
 ```markdown
 ## Description
+
 Brief description of changes and motivation
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
@@ -348,6 +382,7 @@ Brief description of changes and motivation
 - [ ] Refactoring
 
 ## Testing
+
 - [ ] Manual testing completed
 - [ ] Build succeeds
 - [ ] Linting passes
@@ -355,13 +390,16 @@ Brief description of changes and motivation
 - [ ] Accessibility checked
 
 ## Screenshots (if applicable)
+
 Add screenshots for UI changes
 
 ## Additional Notes
+
 Any other relevant information
 ```
 
 ### Review Process
+
 1. **Automated checks**: CI/CD pipeline runs tests
 2. **Code review**: Maintainers review code quality
 3. **Testing**: Functionality verification
@@ -371,18 +409,21 @@ Any other relevant information
 ## 🎯 Contribution Ideas
 
 ### Beginner-Friendly
+
 - **Improve AI prompts**: Enhance translation quality through better prompts
 - **Fix typos**: Improve documentation clarity
 - **Add examples**: More realistic business scenarios
 - **UI polish**: Small visual improvements
 
 ### Intermediate
+
 - **Mobile optimisation**: Improve responsive design
 - **Performance**: Bundle size or API speed improvements
 - **Error handling**: Better user feedback
 - **Accessibility**: Screen reader support
 
 ### Advanced
+
 - **New AI models**: Integration with additional models
 - **Advanced retry logic**: Sophisticated error handling and recovery
 - **Caching system**: Improve response times
@@ -392,18 +433,21 @@ Any other relevant information
 ## 🤝 Community Guidelines
 
 ### Be Respectful
+
 - **Constructive feedback**: Focus on code, not person
 - **Professional tone**: Maintain courtesy in all interactions
 - **Inclusive language**: Welcome contributors of all backgrounds
 - **Patience**: Remember everyone is learning
 
 ### Satirical Context
+
 - **Punch up, not down**: Mock corporate culture, not individuals
 - **Clever, not mean**: Aim for wit rather than cruelty
 - **Professional standards**: High code quality for satirical content
 - **Appropriate humour**: Keep it workplace-friendly
 
 ### Communication
+
 - **Clear descriptions**: Explain changes and reasoning
 - **Ask questions**: Don't hesitate to seek clarification
 - **Share knowledge**: Help other contributors learn
@@ -421,12 +465,14 @@ Contributors are recognised in several ways:
 ## 📞 Getting Help
 
 ### Resources
+
 - **Documentation**: Check [docs/](./README.md) first
 - **Issues**: Search existing GitHub issues
 - **Discussions**: Use GitHub Discussions for questions
 - **Code review**: Learn from existing PRs
 
 ### Contact
+
 - **Bug reports**: [GitHub Issues](https://github.com/hashmil/ad-jargon/issues)
 - **Feature requests**: [GitHub Issues](https://github.com/hashmil/ad-jargon/issues)
 - **Questions**: [GitHub Discussions](https://github.com/hashmil/ad-jargon/discussions)
@@ -435,4 +481,4 @@ Contributors are recognised in several ways:
 
 Thank you for helping make corporate communication more synergistically paradigm-shifting! Together, we can leverage our collective ideation to optimise the satirical value proposition of this mission-critical jargon-translation ecosystem. 🎭✨
 
-*Remember: The best contributions are the ones that make people laugh while maintaining professional code quality!*
+_Remember: The best contributions are the ones that make people laugh while maintaining professional code quality!_
