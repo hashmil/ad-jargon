@@ -36,6 +36,12 @@ export default function Home() {
         body: JSON.stringify({ text: text.trim() }),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP ${response.status}: ${errorText}`);
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
@@ -49,11 +55,27 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Translation error:", error);
+      
+      // More specific error messages
+      let errorMessage = "Translation failed. Please try again.";
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = "Network error. Please check your connection and try again.";
+      } else if (error instanceof Error) {
+        if (error.message.includes('429')) {
+          errorMessage = "Too many requests. Please wait a moment and try again.";
+        } else if (error.message.includes('500')) {
+          errorMessage = "Service temporarily unavailable. Please try again later.";
+        } else if (error.message.includes('400')) {
+          errorMessage = "Invalid input. Please check your text and try again.";
+        }
+      }
+      
       setState((prev) => ({
         ...prev,
         agencyText: "",
         isLoading: false,
-        error: "Translation failed. Please try again.",
+        error: errorMessage,
       }));
     }
   };

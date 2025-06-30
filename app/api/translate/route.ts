@@ -5,6 +5,20 @@ import { defaultValidator } from '@/lib/input-validator';
 
 export const runtime = 'edge';
 
+// Add CORS headers for better browser compatibility
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: NextRequest) {
   const clientId = getClientIdentifier(request);
   const timestamp = new Date().toISOString();
@@ -25,6 +39,7 @@ export async function POST(request: NextRequest) {
       } as TranslationResponse, { 
         status: 429,
         headers: {
+          ...corsHeaders,
           'X-RateLimit-Remaining': '0',
           'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
           'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString()
@@ -42,7 +57,10 @@ export async function POST(request: NextRequest) {
         success: false,
         error: validationResult.error || 'Invalid input',
         translatedText: ''
-      } as TranslationResponse, { status: 400 });
+      } as TranslationResponse, { 
+        status: 400,
+        headers: corsHeaders
+      });
     }
 
     const sanitizedText = validationResult.sanitizedText!;
@@ -90,7 +108,9 @@ Respond with ONLY the translated jargon version, no explanation or surrounding q
               success: true,
               translatedText: aiTranslation,
               method: 'ai'
-            } as TranslationResponse);
+            } as TranslationResponse, {
+              headers: corsHeaders
+            });
           }
         }
 
@@ -119,6 +139,7 @@ Respond with ONLY the translated jargon version, no explanation or surrounding q
     } as TranslationResponse, { 
       status: 500,
       headers: {
+        ...corsHeaders,
         'X-RateLimit-Remaining': rateLimitResult.remaining.toString()
       }
     });
