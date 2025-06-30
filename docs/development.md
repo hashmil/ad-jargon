@@ -55,7 +55,7 @@ ad-jargon/
 │   └── page.tsx           # Home page
 ├── docs/                  # Documentation
 ├── lib/                   # Utility functions
-│   └── translator.ts      # Fallback translation
+│   └── translator.ts      # Translation utilities
 ├── types/                 # TypeScript definitions
 │   └── translator.ts      # Interface definitions
 ├── public/                # Static assets
@@ -112,7 +112,7 @@ ad-jargon/
 
 3. **Test Thoroughly**
    - Manual testing in development
-   - Check both AI and fallback systems
+   - Check AI translation with retry logic
    - Verify responsive design
 
 4. **Create Pull Request**
@@ -150,8 +150,8 @@ export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   // 1. Input validation
-  // 2. AI translation attempt
-  // 3. Fallback on failure
+  // 2. AI translation with retry logic
+  // 3. Error handling on failure
   // 4. Return structured response
 }
 ```
@@ -168,7 +168,7 @@ export interface TranslationResponse {
   translatedText: string;
   success: boolean;
   error?: string;
-  method?: 'ai' | 'fallback';
+  retryCount?: number;
 }
 ```
 
@@ -202,33 +202,30 @@ export interface TranslationResponse {
 
 ## 🔧 Adding New Features
 
-### Adding New Jargon Mappings
+### Enhancing AI Translation
 
-1. **Edit Translation Mappings**
+1. **Update AI Prompts**
    ```typescript
-   // lib/translator.ts
-   export const jargonMap: JargonMap = {
-     // Add new mappings
-     'your-term': 'synergistic replacement',
-     'another-word': 'paradigm-shifting alternative',
-     // ...existing mappings
-   };
+   // app/api/translate/route.ts
+   const systemPrompt = `
+     You are an expert at transforming business language into...
+     // Enhance prompts for better results
+   `;
    ```
 
-2. **Add Buzzwords**
+2. **Adjust Retry Logic**
    ```typescript
-   export const buzzwords = [
-     // Add new buzzwords
-     'revolutionary', 'transformative', 'disruptive',
-     // ...existing buzzwords
-   ];
+   const MAX_RETRIES = 3;
+   const RETRY_DELAY = 1000; // milliseconds
+   
+   // Implement exponential backoff
    ```
 
-3. **Test New Mappings**
+3. **Test AI Responses**
    ```bash
    # Test in development
    npm run dev
-   # Try phrases containing your new terms
+   # Try various phrases to test AI consistency
    ```
 
 ### Adding New AI Models
@@ -294,7 +291,7 @@ export interface TranslationResponse {
 
 - [ ] **Translation Functionality**
   - [ ] AI translation works with valid API key
-  - [ ] Fallback system activates when AI fails
+  - [ ] Retry logic handles temporary failures
   - [ ] Error handling for invalid input
   - [ ] Loading states display correctly
 
@@ -318,12 +315,13 @@ npm install --save-dev @testing-library/react @testing-library/jest-dom jest
 
 ```typescript
 // __tests__/translator.test.ts (future)
-import { fallbackTranslation } from '@/lib/translator';
+import { translateWithRetry } from '@/lib/translator';
 
-describe('Fallback Translation', () => {
-  test('transforms simple business phrase', () => {
-    const result = fallbackTranslation('Let's think about it');
-    expect(result).toContain('ideate');
+describe('AI Translation', () => {
+  test('handles retry logic correctly', async () => {
+    const result = await translateWithRetry('Let\'s think about it');
+    expect(result.success).toBe(true);
+    expect(result.retryCount).toBeDefined();
   });
 });
 ```

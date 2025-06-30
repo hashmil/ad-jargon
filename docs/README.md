@@ -28,7 +28,7 @@ Welcome to the comprehensive documentation for the Ad Agency Jargon Translator! 
 - [**CI/CD**](./cicd.md) - Continuous integration and deployment
 
 ### Features
-- [**Translation System**](./translation-system.md) - How the AI and fallback translation works
+- [**Translation System**](./translation-system.md) - How the AI translation with retry logic works
 - [**UI Components**](./ui-components.md) - Component library and design system
 - [**Internationalisation**](./i18n.md) - British English implementation details
 
@@ -61,8 +61,8 @@ Welcome to the comprehensive documentation for the Ad Agency Jargon Translator! 
 ## 🎯 Key Concepts
 
 - **Satirical Purpose**: This application parodies corporate buzzword culture
-- **AI-First Approach**: Uses Mistral AI for authentic jargon generation
-- **Graceful Fallback**: Rule-based system ensures reliability
+- **AI-Only Approach**: Uses Mistral AI for authentic jargon generation
+- **Retry Logic**: Built-in retry system ensures reliable translation
 - **British English**: Consistent spelling throughout (optimise, colour, etc.)
 - **Edge Runtime**: Optimised for Cloudflare's global network
 

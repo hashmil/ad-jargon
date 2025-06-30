@@ -11,7 +11,7 @@ The application uses environment variables for configuration, primarily for API 
 ### OPENROUTER_API_KEY
 
 **Description**: API key for OpenRouter service to access AI translation models  
-**Required**: Yes (for AI translation, fallback works without it)  
+**Required**: Yes (required for all translation functionality)  
 **Format**: `sk-or-v1-{random-string}`  
 **Example**: `sk-or-v1-1234567890abcdef1234567890abcdef`  
 
@@ -29,6 +29,7 @@ OPENROUTER_API_KEY=sk-or-v1-your-actual-key-here
 
 # Cloudflare Pages (production)
 # Add via dashboard: Settings → Environment variables
+# This key is required for the application to function
 ```
 
 **Security notes**:
@@ -143,7 +144,7 @@ DEBUG=false
 ```bash
 # Ad Agency Jargon Translator - Local Development Configuration
 
-# OpenRouter API (Required for AI translation)
+# OpenRouter API (Required - application will not work without this)
 OPENROUTER_API_KEY=sk-or-v1-your-development-key-here
 
 # Optional: Debug logging
@@ -157,7 +158,7 @@ OPENROUTER_API_KEY=sk-or-v1-your-development-key-here
 ```bash
 # Ad Agency Jargon Translator - Production Configuration
 
-# OpenRouter API (Required)
+# OpenRouter API (Required - application will not work without this)
 OPENROUTER_API_KEY=sk-or-v1-your-production-key-here
 
 # Production environment
@@ -175,7 +176,7 @@ NEXT_TELEMETRY_DISABLED=1
 # Ad Agency Jargon Translator - Environment Template
 # Copy to .env.local and fill in your values
 
-# OpenRouter API Key (Required)
+# OpenRouter API Key (Required - application will not work without this)
 # Get free key at: https://openrouter.ai
 OPENROUTER_API_KEY=sk-or-v1-your-key-here
 

@@ -84,7 +84,7 @@ Suggest new ways to enhance the satirical experience:
 - Consideration of complexity
 
 **Feature Categories:**
-- **New Jargon**: Additional buzzwords and mappings
+- **AI Prompt Improvements**: Better translation quality through prompt engineering
 - **UI Improvements**: Better user experience
 - **API Enhancements**: More translation options
 - **Performance**: Faster, more efficient operation
@@ -92,25 +92,23 @@ Suggest new ways to enhance the satirical experience:
 
 ### 🔧 Code Contributions
 
-#### New Jargon Mappings
-The easiest way to contribute! Add corporate buzzwords to the fallback system:
+#### AI Prompt Improvements
+Help improve translation quality by enhancing the AI prompts:
 
 ```typescript
-// lib/translator.ts
-export const jargonMap: JargonMap = {
-  // Add your contributions here
-  'schedule': 'temporal roadmap alignment',
-  'email': 'digital touchpoint communication',
-  'coffee': 'caffeinated ideation fuel',
-  // ... existing mappings
-};
+// Suggest improvements to prompts in app/api/translate/route.ts
+// Focus on making the AI generate more creative and satirical jargon
+// Examples of good prompt improvements:
+// - Better context setting for corporate satire
+// - More specific instructions for British English
+// - Enhanced creativity directives
 ```
 
-**Jargon Guidelines:**
-- Should be hilariously over-the-top
-- Use British English spelling
-- Maintain satirical tone
-- Avoid offensive content
+**Prompt Enhancement Guidelines:**
+- Should encourage hilariously over-the-top translations
+- Maintain British English spelling preferences
+- Enhance satirical tone through better context
+- Avoid prompts that could generate offensive content
 
 #### UI Enhancements
 Improve the user interface and experience:
@@ -123,13 +121,14 @@ Improve the user interface and experience:
 - Dark mode support
 
 #### API Improvements
-Enhance the translation system:
+Enhance the AI translation system:
 
 **Possible enhancements:**
 - Support for different AI models
+- Retry logic with exponential backoff
 - Caching layer for common phrases
 - Rate limiting improvements
-- Better error handling
+- Better error handling and user feedback
 
 #### Performance Optimisations
 Make the application faster and more efficient:
@@ -190,7 +189,7 @@ npm run dev
 // Use explicit interfaces
 interface TranslationOptions {
   text: string;
-  method: 'ai' | 'fallback';
+  retryCount?: number;
 }
 
 // Prefer type-safe approaches
@@ -276,12 +275,12 @@ export async function POST(request: NextRequest) {
 ### Manual Testing Checklist
 Before submitting a PR, verify:
 
-- [ ] **Functionality**: Translation works with both AI and fallback
+- [ ] **Functionality**: AI translation works with proper retry logic
 - [ ] **UI**: All interactive elements work correctly
 - [ ] **Responsive**: Layout works on mobile, tablet, desktop
 - [ ] **Performance**: No significant slowdowns introduced
 - [ ] **British English**: Consistent spelling throughout
-- [ ] **Error Handling**: Graceful failure states
+- [ ] **Error Handling**: Graceful failure states with retry attempts
 - [ ] **Accessibility**: Keyboard navigation and screen readers
 
 ### Testing Commands
@@ -293,10 +292,11 @@ npm run lint          # Code quality checks
 
 # Manual testing scenarios
 # 1. Test with valid OpenRouter API key
-# 2. Test with invalid/missing API key (should use fallback)
-# 3. Test various input lengths and formats
-# 4. Test mobile responsiveness
-# 5. Test example phrases functionality
+# 2. Test with invalid/missing API key (should show error)
+# 3. Test API retry logic with temporary failures
+# 4. Test various input lengths and formats
+# 5. Test mobile responsiveness
+# 6. Test example phrases functionality
 ```
 
 ## 📝 Commit Message Guidelines
@@ -323,7 +323,7 @@ git commit -m "refactor: extract translation logic into separate utility"
 git commit -m "style: fix TypeScript linting errors"
 
 # Tests
-git commit -m "test: add unit tests for fallback translation system"
+git commit -m "test: add unit tests for AI translation retry logic"
 ```
 
 ## 🔍 Pull Request Process
@@ -371,7 +371,7 @@ Any other relevant information
 ## 🎯 Contribution Ideas
 
 ### Beginner-Friendly
-- **Add jargon mappings**: Expand the corporate dictionary
+- **Improve AI prompts**: Enhance translation quality through better prompts
 - **Fix typos**: Improve documentation clarity
 - **Add examples**: More realistic business scenarios
 - **UI polish**: Small visual improvements
@@ -384,6 +384,7 @@ Any other relevant information
 
 ### Advanced
 - **New AI models**: Integration with additional models
+- **Advanced retry logic**: Sophisticated error handling and recovery
 - **Caching system**: Improve response times
 - **Analytics**: Usage tracking and insights
 - **Internationalisation**: Multi-language support

@@ -81,12 +81,15 @@ npm run dev
 console.log(process.env.OPENROUTER_API_KEY); // Should be undefined (security)
 ```
 
-### Translation Issues
+### AI Translation Issues
 
-#### Issue: AI translation not working
+The application relies entirely on AI-powered translation via the OpenRouter API. All translation issues are related to AI API connectivity, authentication, or service availability.
+
+#### Issue: AI translation failing
 **Symptoms:**
-- Always falls back to rule-based translation
-- Error messages about API failures
+- Translation requests fail with error messages
+- Retry attempts not working
+- Timeout errors on API calls
 
 **Solutions:**
 1. **Verify API Key:**
@@ -109,19 +112,34 @@ console.log(process.env.OPENROUTER_API_KEY); // Should be undefined (security)
    curl https://openrouter.ai/api/v1/models
    ```
 
-#### Issue: Fallback translation not working
+4. **Check Retry Logic:**
+   ```typescript
+   // Verify retry configuration in API route
+   const maxRetries = 3;
+   const retryDelay = 1000; // 1 second
+   ```
+
+#### Issue: Translation completely failing
 **Symptoms:**
 - No translation output at all
-- JavaScript errors in console
+- Network errors or timeouts
+- API key authentication issues
 
 **Solutions:**
-```typescript
-// Check if jargonMap is imported correctly
-import { fallbackTranslation } from '@/lib/translator';
+1. **Check API Status:**
+   ```bash
+   # Test API connectivity
+   curl -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+        https://openrouter.ai/api/v1/chat/completions \
+        -H "Content-Type: application/json" \
+        -d '{"model":"mistralai/mistral-7b-instruct","messages":[{"role":"user","content":"test"}]}'
+   ```
 
-// Test fallback function directly
-console.log(fallbackTranslation("test phrase"));
-```
+2. **Verify Retry Configuration:**
+   ```typescript
+   // Check retry settings in API route
+   const retryAttempts = await retryWithBackoff(translateRequest, 3);
+   ```
 
 #### Issue: British English not consistent
 **Symptoms:**
@@ -135,12 +153,10 @@ console.log(fallbackTranslation("test phrase"));
    "Use British English spelling throughout (e.g., 'optimise,' 'realise,' 'colour,' 'centre')"
    ```
 
-2. **Update Fallback Mappings:**
+2. **Verify AI Prompt Configuration:**
    ```typescript
-   // lib/translator.ts - ensure all mappings use British spelling
-   'optimize': 'optimise',
-   'color': 'colour',
-   'realize': 'realise'
+   // Ensure the AI prompt is properly configured for British English
+   const systemPrompt = "...Use British English spelling throughout..."
    ```
 
 ### Deployment Issues
@@ -215,6 +231,7 @@ Error: node:async_hooks not found
 **Symptoms:**
 - Translation takes >10 seconds
 - Timeouts on requests
+- Retry attempts taking too long
 
 **Solutions:**
 1. **Check API Provider Status:**
@@ -230,16 +247,142 @@ Error: node:async_hooks not found
    temperature: 0.8  // vs 1.0+
    ```
 
-3. **Implement Client-side Timeout:**
+3. **Configure Timeout and Retry:**
    ```typescript
    const controller = new AbortController();
-   setTimeout(() => controller.abort(), 10000); // 10s timeout
+   setTimeout(() => controller.abort(), 8000); // 8s timeout per attempt
+   
+   // With retry logic
+   const maxRetries = 3;
+   const baseDelay = 1000;
    
    fetch('/api/translate', {
      signal: controller.signal,
      // ... other options
    });
    ```
+
+4. **Monitor Retry Behaviour:**
+   ```typescript
+   // Check retry logs in API route
+   console.log(`Retry attempt ${attempt} of ${maxRetries}`);
+   ```
+
+#### Issue: Retry logic not working
+**Symptoms:**
+- Single failed request doesn't retry
+- Immediate failure without retry attempts
+- Retry attempts using same failed parameters
+
+**Solutions:**
+1. **Verify Retry Implementation:**
+   ```typescript
+   // Check retry function in API route
+   async function retryWithBackoff(fn: () => Promise<any>, maxRetries: number) {
+     for (let attempt = 1; attempt <= maxRetries; attempt++) {
+       try {
+         return await fn();
+       } catch (error) {
+         if (attempt === maxRetries) throw error;
+         const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
+         await new Promise(resolve => setTimeout(resolve, delay));
+       }
+     }
+   }
+   ```
+
+2. **Check Error Types:**
+   ```typescript
+   // Only retry on specific errors
+   if (error.status === 429 || error.status >= 500) {
+     // Retry on rate limit or server errors
+     continue;
+   } else {
+     // Don't retry on client errors (400, 401, etc.)
+     throw error;
+   }
+   ```
+
+3. **Monitor Retry Logs:**
+   ```bash
+   # Check server logs for retry attempts
+   npm run dev
+   # Look for: "Retry attempt X of Y" messages
+   ```
+
+### Network Connectivity Issues
+
+Since the application depends entirely on external AI services, network issues are critical failure points.
+
+#### Issue: Intermittent API failures
+**Symptoms:**
+- Some translations work, others fail
+- Inconsistent response times
+- Timeout errors during peak usage
+
+**Solutions:**
+1. **Implement Connection Pooling:**
+   ```typescript
+   // Configure persistent connections
+   const agent = new https.Agent({
+     keepAlive: true,
+     maxSockets: 10
+   });
+   ```
+
+2. **Monitor Network Health:**
+   ```bash
+   # Test sustained connectivity
+   for i in {1..10}; do
+     curl -w "@curl-format.txt" -s -o /dev/null \
+       https://openrouter.ai/api/v1/models
+     sleep 1
+   done
+   ```
+
+3. **Add Circuit Breaker Pattern:**
+   ```typescript
+   // Prevent cascade failures
+   if (consecutiveFailures > 5) {
+     return { error: 'Service temporarily unavailable' };
+   }
+   ```
+
+#### Issue: DNS resolution problems
+**Symptoms:**
+- Cannot connect to openrouter.ai
+- DNS lookup failures in logs
+
+**Solutions:**
+```bash
+# Test DNS resolution
+nslookup openrouter.ai
+dig openrouter.ai
+
+# Try alternative DNS servers
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+```
+
+#### Issue: Firewall blocking requests
+**Symptoms:**
+- Connections timing out
+- No response from API endpoints
+
+**Solutions:**
+1. **Check Firewall Rules:**
+   ```bash
+   # Allow HTTPS outbound traffic
+   sudo ufw allow out 443
+   
+   # Check corporate firewall settings
+   curl -v https://openrouter.ai/api/v1/models
+   ```
+
+2. **Test from Different Networks:**
+   - Try mobile hotspot vs corporate network
+   - Test from different geographic locations
+   - Check if VPN affects connectivity
 
 #### Issue: High bandwidth usage
 **Symptoms:**
@@ -348,15 +491,36 @@ fetch('/api/translate', {
 ```typescript
 // app/api/translate/route.ts
 export async function POST(request: NextRequest) {
-  console.log('API called with:', await request.text());
+  const { text } = await request.json();
+  console.log('Translation request:', text);
   
-  try {
-    // ... translation logic
-    console.log('Translation successful:', result);
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error('Translation failed:', error);
-    // ... error handling
+  let attempt = 0;
+  const maxRetries = 3;
+  
+  while (attempt < maxRetries) {
+    attempt++;
+    console.log(`AI translation attempt ${attempt} of ${maxRetries}`);
+    
+    try {
+      const result = await callOpenRouterAPI(text);
+      console.log('AI translation successful:', result);
+      return NextResponse.json(result);
+    } catch (error) {
+      console.error(`AI translation attempt ${attempt} failed:`, error);
+      
+      if (attempt === maxRetries) {
+        console.error('All AI translation attempts failed');
+        return NextResponse.json(
+          { error: 'Translation service unavailable' },
+          { status: 503 }
+        );
+      }
+      
+      // Wait before retry
+      const delay = Math.pow(2, attempt) * 1000;
+      console.log(`Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
   }
 }
 ```
@@ -406,7 +570,7 @@ Use this checklist to verify everything is working:
 ### API Health
 - [ ] Translation endpoint responds
 - [ ] AI translation works (when API key valid)
-- [ ] Fallback system activates when needed
+- [ ] Retry logic handles temporary failures
 - [ ] Error responses are properly formatted
 - [ ] British English spelling consistent
 

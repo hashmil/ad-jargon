@@ -23,7 +23,7 @@ The project uses British English throughout (optimise, colour, realise) for cons
 - **Styling**: TailwindCSS v4 with custom gradients
 - **AI**: OpenRouter API with Mistral Small 3.2 24B model
 - **Hosting**: Cloudflare Pages with Edge Runtime
-- **Fallback**: Rule-based translation system
+- **Reliability**: Retry logic with up to 2 attempts for failed requests
 
 ### Why use OpenRouter instead of OpenAI directly?
 - **Cost**: Free tier with generous limits
@@ -32,14 +32,14 @@ The project uses British English throughout (optimise, colour, realise) for cons
 - **Flexibility**: Easy to switch models if needed
 
 ### What happens if the AI is unavailable?
-The application has a robust fallback system that uses rule-based translation. It will always provide a jargon translation even if the AI service is down, ensuring 100% uptime for core functionality.
+The application uses retry logic to handle temporary failures. If the initial request fails, it will automatically retry up to 2 times. If all attempts fail, the user will receive an error message and can try again manually.
 
-### How does the fallback system work?
-It uses:
-1. **Predefined mappings**: 40+ common business terms to jargon equivalents
-2. **Buzzword injection**: Random corporate buzzwords added throughout
-3. **Template phrases**: Agency-style prefixes and suffixes
-4. **British spelling**: Consistent with the overall application
+### How does the retry system work?
+The application implements:
+1. **Automatic retries**: Up to 2 additional attempts for failed requests
+2. **Exponential backoff**: Brief delays between retry attempts
+3. **Error handling**: Clear error messages when all attempts fail
+4. **Manual retry**: Users can simply click translate again
 
 ### Is my data stored anywhere?
 No! The application is completely stateless:
@@ -51,7 +51,7 @@ No! The application is completely stateless:
 ## 🚀 Usage Questions
 
 ### How accurate are the translations?
-"Accuracy" is subjective for satirical content! The AI translations are creative and contextual, while the fallback system is more predictable but reliable. Both aim to be entertainingly over-the-top rather than "accurate."
+"Accuracy" is subjective for satirical content! The AI translations are creative and contextual, aiming to be entertainingly over-the-top rather than "accurate." The AI model provides sophisticated understanding of business language and corporate culture.
 
 ### Can I use this for actual business communications?
 Please don't! While the output is grammatically correct, it's intentionally ridiculous and may confuse or alienate your audience. Use it for humour, training examples, or understanding how corporate jargon works.
@@ -63,9 +63,9 @@ There's no hard limit enforced, but:
 - **Performance**: Shorter inputs translate faster
 
 ### Why does the same input sometimes produce different outputs?
-- **AI Translation**: Uses temperature=0.8 for creativity, so outputs vary
-- **Fallback System**: Includes randomness in buzzword injection
-- **Different Methods**: AI vs fallback will produce different styles
+- **AI Creativity**: Uses temperature=0.8 for creative variation in outputs
+- **Model Behaviour**: AI models naturally produce slightly different results
+- **Contextual Understanding**: The AI considers subtle nuances in phrasing
 
 ### Can I translate non-English text?
 The system is designed for English business language. Other languages may produce unexpected results or fail to translate properly.
@@ -79,16 +79,12 @@ Absolutely! The project welcomes contributions:
 - **Code contributions**: Submit pull requests
 - **Documentation**: Help improve guides and docs
 
-### How do I add my own jargon mappings?
-Edit `lib/translator.ts`:
+### How do I customize the AI translation behaviour?
+Edit the prompt in `app/api/translate/route.ts`:
 
 ```typescript
-export const jargonMap: JargonMap = {
-  // Add your mappings here
-  'your-term': 'synergistic replacement',
-  'another-word': 'paradigm-shifting alternative',
-  // ... existing mappings
-};
+// Modify the system prompt to adjust translation style
+const prompt = `Your customized instructions for the AI model...`;
 ```
 
 ### Can I use a different AI model?
@@ -132,12 +128,12 @@ Yes! The live application at [ad-jargon.pages.dev](https://ad-jargon.pages.dev) 
 **OpenRouter Free Tier includes:**
 - Access to Mistral Small 3.2 24B model
 - Rate-limited but generous for personal use
-- Fallback system ensures availability
+- Retry logic handles temporary failures
 
 ### What if I exceed the free limits?
 - **Cloudflare**: Upgrade to Pages Pro ($20/month) for higher limits
 - **OpenRouter**: Add credits for additional AI usage
-- **Fallback**: Always works regardless of AI limits
+- **Retry Logic**: Helps handle temporary rate limiting
 
 ### Can I monetise my own deployment?
 The project is open source under MIT License, so you can:
@@ -195,15 +191,15 @@ npm start
 - **Network**: Internet access for AI API calls
 
 ### Can I run this offline?
-Partially:
-- **Fallback system**: Works completely offline
-- **AI translation**: Requires internet connection to OpenRouter
-- **Static assets**: Can be cached for offline use
+No, the application requires an internet connection:
+- **AI translation**: Requires connection to OpenRouter API
+- **No offline mode**: All translation is handled by AI
+- **Static assets**: Can be cached for faster loading
 
 ### How do I customize the jargon?
 Several customisation points:
-- **Jargon mappings**: Edit `lib/translator.ts`
-- **AI prompts**: Modify `app/api/translate/route.ts`
+- **AI prompts**: Modify system prompts in `app/api/translate/route.ts`
+- **Model selection**: Choose different AI models for different styles
 - **UI text**: Update `app/page.tsx`
 - **Styling**: Customize TailwindCSS classes
 
@@ -217,10 +213,10 @@ Absolutely! The application uses TailwindCSS:
 - **Themes**: Add dark/light mode switching
 
 ### Can I add more example phrases?
-Yes, edit `lib/translator.ts`:
+Yes, edit the example phrases in your main component:
 
 ```typescript
-export const examplePhrases = [
+const examplePhrases = [
   // Add your examples here
   "Your new example phrase",
   "Another business scenario",
@@ -238,27 +234,30 @@ Yes! You can:
 ## 🐛 Troubleshooting
 
 ### The translation isn't working, what should I check?
-1. **Check the fallback**: Does rule-based translation work?
-2. **Verify API key**: Is your OpenRouter key valid?
-3. **Network issues**: Can you reach openrouter.ai?
+1. **Verify API key**: Is your OpenRouter key valid and active?
+2. **Network issues**: Can you reach openrouter.ai?
+3. **Rate limits**: Have you exceeded the API rate limits?
 4. **Console errors**: Any JavaScript errors in browser?
+5. **Retry**: Try the translation again as retry logic may resolve temporary issues
 
 ### Why am I getting American spellings?
 - **AI model**: May default to American English despite prompts
-- **Fallback mappings**: Check if all use British spellings
+- **Prompt refinement**: Adjust system prompts to emphasize British spellings
 - **Input text**: American spellings in input may influence output
+- **Model training**: AI models may have bias toward American English
 
 ### The site is slow, how can I speed it up?
 - **CDN**: Cloudflare provides global caching
-- **AI response**: Can take 2-5 seconds (normal)
-- **Fallback**: Should be <100ms response time
-- **Network**: Check your internet connection
+- **AI response**: Can take 2-5 seconds (normal for AI processing)
+- **Retry delays**: Retry logic may add slight delays for failed requests
+- **Network**: Check your internet connection and API response times
 
 ### Common error messages and solutions:
 - **"Text is required"**: Ensure you've entered text before translating
-- **"Translation failed"**: Try again, fallback should still work
-- **"Network error"**: Check internet connection
-- **"Rate limited"**: Wait a moment and try again
+- **"Translation failed"**: Try again, retry logic will attempt up to 2 more times
+- **"Network error"**: Check internet connection to OpenRouter API
+- **"Rate limited"**: Wait a moment and try again, or check your API usage limits
+- **"API key invalid"**: Verify your OpenRouter API key is correct and active
 
 ## 🤝 Community and Support
 

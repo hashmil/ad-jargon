@@ -67,8 +67,8 @@ Normal: *"Let's brainstorm some ideas"*
 ## 🔧 What's Included
 
 ### Core Features
-- ✅ **AI-Powered Translation** - Mistral AI via OpenRouter
-- ✅ **Intelligent Fallback** - Rule-based system always works
+- ✅ **AI-Powered Translation** - Mistral AI via OpenRouter with retry logic
+- ✅ **Reliable Performance** - Built-in retry system ensures consistent results
 - ✅ **British English** - Proper spelling (optimise, colour, etc.)
 - ✅ **Real-time UI** - Instant feedback and loading states
 - ✅ **Example Phrases** - Pre-loaded inspiration
@@ -116,7 +116,7 @@ ad-jargon/
 │   ├── layout.tsx          # Root layout with metadata
 │   └── page.tsx            # Main translator interface
 ├── lib/
-│   └── translator.ts       # Fallback translation logic
+│   └── translator.ts       # AI translation utilities
 ├── types/
 │   └── translator.ts       # TypeScript interfaces
 ├── docs/                   # Comprehensive documentation
@@ -125,14 +125,12 @@ ad-jargon/
 
 ## 🎨 Customisation Ideas
 
-### Add Your Own Jargon
-Edit `lib/translator.ts` to add custom buzzwords:
+### Customize AI Prompts
+Edit the AI prompt in `app/api/translate/route.ts` to customize translation style:
 
 ```typescript
-const customJargon = {
-  'your-word': 'synergistic replacement',
-  'another-term': 'paradigm-shifting alternative'
-};
+const systemPrompt = `Transform this business text into over-the-top advertising agency jargon.
+Use your custom style preferences here...`;
 ```
 
 ### Modify the UI Theme
@@ -209,7 +207,7 @@ This application satirises the ridiculous, impenetrable language of the advertis
 ### Common Issues
 
 **Q: Translation not working?**
-A: Check your OpenRouter API key in `.env.local`. The fallback system should still work even without AI.
+A: Check your OpenRouter API key in `.env.local`. The API key is required for all translation functionality.
 
 **Q: Build failing?**
 A: Ensure you're using Node.js 18+ and all dependencies are installed.
@@ -226,7 +224,7 @@ A: TailwindCSS v4 requires specific configuration. Check if `npm run dev` shows 
 
 ### API Limits
 - **OpenRouter Free Tier**: Rate limited but generous
-- **Fallback Always Works**: Local translation when AI unavailable
+- **Retry Logic**: Automatic retries ensure reliable translation
 - **No Data Storage**: Your input text is never stored
 
 ### British English
