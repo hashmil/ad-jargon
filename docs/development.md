@@ -291,20 +291,32 @@ export interface TranslationResponse {
 
 - [ ] **Translation Functionality**
   - [ ] AI translation works with valid API key
-  - [ ] Retry logic handles temporary failures
+  - [ ] Retry logic handles temporary failures (up to 2 retries)
   - [ ] Error handling for invalid input
   - [ ] Loading states display correctly
+  - [ ] Specific error messages show based on error type
+
+- [ ] **Browser Compatibility**
+  - [ ] Works correctly in Chrome on desktop
+  - [ ] Works correctly in Safari on desktop
+  - [ ] Works correctly in Safari on iOS
+  - [ ] Works correctly in Chrome on iOS (key compatibility issue)
+  - [ ] CORS headers resolve cross-browser issues
+  - [ ] Network error handling works across browsers
 
 - [ ] **User Interface**
   - [ ] Responsive design on mobile/tablet/desktop
+  - [ ] Mobile headline has proper padding from screen edge
   - [ ] All buttons and interactions work
   - [ ] Example phrases populate correctly
   - [ ] Copy/paste functionality works
+  - [ ] Error states display user-friendly messages
 
 - [ ] **Performance**
   - [ ] Page loads quickly
   - [ ] API responses are reasonably fast
   - [ ] No memory leaks or console errors
+  - [ ] Rate limiting works correctly
 
 ### Automated Testing Setup
 
@@ -365,6 +377,13 @@ npm run dev
 // Verify Edge Runtime export
 export const runtime = 'edge';
 
+// Check CORS headers are properly configured
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 // Check API route file structure
 app/api/translate/route.ts
 
@@ -374,13 +393,29 @@ curl -X POST http://localhost:3000/api/translate \
   -d '{"text": "test"}'
 ```
 
+#### Chrome on iOS Issues
+```bash
+# Test CORS preflight support
+curl -X OPTIONS http://localhost:3000/api/translate \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: Content-Type"
+
+# Check for proper error handling
+# Open browser dev tools and check Network tab for:
+# - Failed preflight requests
+# - CORS errors
+# - Network timeout errors
+```
+
 ### Development Tools
 
 #### Browser DevTools
-- **Console**: Check for JavaScript errors
-- **Network**: Monitor API requests/responses
+- **Console**: Check for JavaScript errors and network issues
+- **Network**: Monitor API requests/responses and CORS errors
 - **Performance**: Identify slow operations
 - **Application**: Check service workers, storage
+- **Sources**: Debug TypeScript code with source maps
+- **Device Simulation**: Test mobile responsiveness and iOS-specific issues
 
 #### VS Code Debugging
 ```json

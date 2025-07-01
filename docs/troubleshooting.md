@@ -406,6 +406,66 @@ echo "nameserver 1.1.1.1" >> /etc/resolv.conf
    };
    ```
 
+### Browser Compatibility Issues
+
+#### Issue: Chrome on iOS translation failures
+**Symptoms:**
+- Translations work in Safari on iOS but fail in Chrome on iOS
+- Network errors or timeouts specifically on Chrome iOS
+- Error messages like "Network error. Please check your connection."
+
+**Solutions:**
+1. **CORS Headers Issue (Fixed):**
+   ```typescript
+   // Verify CORS headers are properly configured in API route
+   const corsHeaders = {
+     'Access-Control-Allow-Origin': '*',
+     'Access-Control-Allow-Methods': 'POST, OPTIONS',
+     'Access-Control-Allow-Headers': 'Content-Type',
+   };
+   ```
+
+2. **Preflight Request Support:**
+   ```typescript
+   // Ensure OPTIONS method is handled
+   export async function OPTIONS() {
+     return new Response(null, {
+       status: 200,
+       headers: corsHeaders,
+     });
+   }
+   ```
+
+3. **Enhanced Error Handling:**
+   ```typescript
+   // Check for specific Chrome iOS issues in frontend
+   if (error instanceof TypeError && error.message.includes('fetch')) {
+     // Network connectivity issue
+   } else if (error.message.includes('429')) {
+     // Rate limiting
+   }
+   ```
+
+4. **Testing Chrome iOS Issues:**
+   ```bash
+   # Test in browser dev tools with iOS simulation
+   # Check Network tab for CORS errors
+   # Look for failed preflight requests
+   # Monitor console for specific error messages
+   ```
+
+#### Issue: Mobile headline touching screen edge
+**Symptoms:**
+- On mobile devices, headline text appears at the very top of screen
+- No padding between device status bar and content
+
+**Solutions:**
+```typescript
+// Add responsive top padding to main container
+<div className="container mx-auto px-6 pt-8 md:pt-0 relative z-10 min-h-screen flex flex-col">
+// pt-8 adds top padding on mobile, md:pt-0 removes it on desktop
+```
+
 ### User Interface Issues
 
 #### Issue: Styles not loading
@@ -479,6 +539,8 @@ fetch('/api/translate', {
 - Monitor API request/response times
 - Check for failed requests (red entries)
 - Verify request payloads and headers
+- Look for CORS errors or failed preflight requests
+- Check for specific Chrome on iOS network issues
 
 #### Performance Tab
 - Identify slow operations
@@ -562,16 +624,22 @@ Use this checklist to verify everything is working:
 ### Frontend Health
 - [ ] Page loads without console errors
 - [ ] All UI components render correctly
-- [ ] Mobile layout works properly
+- [ ] Mobile layout works properly (including headline padding)
+- [ ] Cross-browser compatibility (Chrome, Safari, Firefox)
+- [ ] Chrome on iOS specifically tested and working
 - [ ] Example phrases populate
 - [ ] Input validation works
 - [ ] Loading states display
+- [ ] Error messages are user-friendly and specific
 
 ### API Health
 - [ ] Translation endpoint responds
 - [ ] AI translation works (when API key valid)
-- [ ] Retry logic handles temporary failures
+- [ ] Retry logic handles temporary failures (up to 2 attempts)
+- [ ] CORS headers included in all responses
+- [ ] OPTIONS preflight requests handled correctly
 - [ ] Error responses are properly formatted
+- [ ] Rate limiting works with appropriate headers
 - [ ] British English spelling consistent
 
 ### Performance Health

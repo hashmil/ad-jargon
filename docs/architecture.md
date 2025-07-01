@@ -86,9 +86,9 @@ API receives request → Validates input → Attempts AI translation
 Fetch to OpenRouter → Mistral AI processes → Returns jargon
 ```
 
-### 5. Fallback System
+### 5. Error Handling
 ```typescript
-If AI fails → Rule-based translation → Generates jargon
+If AI fails → Enhanced error messages → User feedback
 ```
 
 ### 6. Response Delivery
@@ -119,27 +119,30 @@ export async function POST(request: NextRequest) {
 
 ## 🔄 Translation System Architecture
 
-### Hybrid Approach
-The translation system uses a two-tier approach for maximum reliability:
+### AI-First Approach
+The translation system uses AI-powered translation with comprehensive error handling:
 
-#### Tier 1: AI Translation
-- **Primary Method**: OpenRouter + Mistral AI
-- **Advantages**: Creative, contextual, authentic
-- **Challenges**: External dependency, rate limits
+#### Primary Method: AI Translation
+- **Technology**: OpenRouter + Mistral AI
+- **Model**: mistralai/mistral-small-3.2-24b-instruct:free
+- **Advantages**: Creative, contextual, authentic buzzword generation
+- **Reliability**: Built-in retry logic (up to 2 attempts)
 
-#### Tier 2: Rule-Based Fallback
-- **Backup Method**: Local jargon mappings
-- **Advantages**: Always available, predictable
-- **Challenges**: Less creative, limited vocabulary
+#### Error Handling Strategy
+- **Network Errors**: Specific error messages for connectivity issues
+- **Rate Limiting**: Clear feedback when API limits are reached
+- **Browser Compatibility**: CORS headers for cross-browser support
+- **Mobile Optimization**: Special handling for Chrome on iOS
 
 ### Translation Pipeline
 ```typescript
 interface TranslationPipeline {
   input: string;
   validate: () => boolean;
+  rateLimit: () => boolean;
   aiTranslate: () => Promise<string>;
-  fallbackTranslate: () => string;
-  enhance: (text: string) => string;
+  retryLogic: (attempts: number) => Promise<string>;
+  errorHandling: (error: Error) => TranslationResponse;
   output: TranslationResponse;
 }
 ```
@@ -166,17 +169,19 @@ App (layout.tsx)
 
 ### Styling Strategy
 - **TailwindCSS**: Utility-first approach
-- **Custom Gradients**: Purple/pink theme
-- **Responsive Design**: Mobile-first breakpoints
-- **Dark Mode Ready**: CSS variables for theming
+- **Custom Gradients**: Ocean blue theme with coral accents
+- **Responsive Design**: Mobile-first breakpoints with iOS compatibility
+- **Mobile Optimization**: Proper padding for mobile headline display
+- **Cross-Browser**: Consistent styling across Safari and Chrome
 
 ## 🔒 Security Considerations
 
 ### API Security
 - **Environment Variables**: Secure API key storage
 - **Input Validation**: Sanitise user input
-- **Rate Limiting**: Cloudflare built-in protection
-- **CORS**: Properly configured for frontend
+- **Rate Limiting**: Client identification and request throttling
+- **CORS Headers**: Explicit CORS configuration for browser compatibility
+- **OPTIONS Handling**: Preflight request support for Chrome on iOS
 
 ### Data Privacy
 - **No Persistence**: No user data stored
@@ -210,24 +215,30 @@ App (layout.tsx)
 
 ## 🔄 Error Handling Strategy
 
-### Graceful Degradation
+### Comprehensive Error Handling
 ```typescript
 try {
-  // Attempt AI translation
-  const aiResult = await aiTranslate();
+  // Check response status
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+  const aiResult = await response.json();
   return aiResult;
 } catch (error) {
-  // Fallback to rule-based
-  const fallbackResult = ruleBasedTranslate();
-  return fallbackResult;
+  // Specific error messages based on error type
+  if (error instanceof TypeError && error.message.includes('fetch')) {
+    return "Network error. Please check your connection and try again.";
+  }
+  // Handle other error types...
 }
 ```
 
 ### User Experience
-- **Loading States**: Clear progress indication
-- **Error Messages**: User-friendly error text
-- **Retry Logic**: Automatic fallback system
-- **Offline Capability**: Rule-based works offline
+- **Loading States**: Clear progress indication with branded messaging
+- **Specific Error Messages**: Context-aware error feedback
+- **Browser Compatibility**: Special handling for Chrome on iOS issues
+- **Retry Logic**: Built-in retry mechanism with user feedback
+- **Network Error Detection**: Distinguish between network and API errors
 
 ## 📈 Scalability Considerations
 

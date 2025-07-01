@@ -20,6 +20,11 @@ Translates normal business text into agency jargon using AI with automatic retry
 Content-Type: application/json
 ```
 
+**CORS Support:**
+- Cross-origin requests are supported
+- OPTIONS preflight requests are handled
+- Supports requests from all origins for public API
+
 **Body:**
 ```typescript
 {
@@ -50,8 +55,9 @@ fetch('/api/translate', {
   "method": "ai"
 }
 ```
+*All responses include CORS headers for browser compatibility*
 
-**Error Response (400/500):**
+**Error Response (400/429/500):**
 ```typescript
 {
   "success": false,
@@ -59,6 +65,16 @@ fetch('/api/translate', {
   "translatedText": ""
 }
 ```
+
+**Rate Limit Response (429):**
+```typescript
+{
+  "success": false,
+  "error": "Too many requests. Please try again later.",
+  "translatedText": ""
+}
+```
+*Includes additional headers: X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After*
 
 #### Example Responses
 
@@ -89,11 +105,20 @@ fetch('/api/translate', {
 }
 ```
 
-**Server Error:**
+**Service Error:**
 ```json
 {
   "success": false,
-  "error": "Failed to translate text",
+  "error": "Service temporarily unavailable. Please try again later.",
+  "translatedText": ""
+}
+```
+
+**Network Error (Client-side handling):**
+```json
+{
+  "success": false,
+  "error": "Network error. Please check your connection and try again.",
   "translatedText": ""
 }
 ```
@@ -163,26 +188,42 @@ The API implements automatic retry functionality:
 
 ## 🔒 Security & Rate Limiting
 
+### CORS Configuration
+```typescript
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+```
+
 ### Authentication
 - No authentication required for public API
 - API key stored securely in environment variables
-- Rate limiting handled by Cloudflare
+- Client identification for rate limiting
 
-### Input Sanitisation
+### Rate Limiting
+- Built-in rate limiting with client identification
+- Graceful error responses with retry information
+- Rate limit headers included in responses
+
+### Input Validation & Sanitisation
 ```typescript
-// Basic validation
-if (!text || typeof text !== 'string' || text.trim().length === 0) {
-  return error('Text is required');
+// Comprehensive validation
+const validationResult = defaultValidator.validate(text);
+if (!validationResult.isValid) {
+  return error(validationResult.error || 'Invalid input');
 }
 
-// Recommended limits
-const MAX_LENGTH = 1000; // characters
+// Text length and content validation
+const sanitizedText = validationResult.sanitizedText;
 ```
 
 ### Error Handling
-- Graceful failure to fallback system
+- Comprehensive error categorization
+- Browser-specific error handling (Chrome on iOS)
 - No sensitive information in error messages
-- Proper HTTP status codes
+- Proper HTTP status codes with CORS headers
 
 ## 📊 Response Times & Performance
 
@@ -217,7 +258,7 @@ curl -X POST https://ad-jargon.pages.dev/api/translate \
   -d '{"text": "We need to discuss the budget"}'
 ```
 
-### Using JavaScript
+### Using JavaScript (with improved error handling)
 ```javascript
 async function translateText(text) {
   try {
@@ -227,6 +268,12 @@ async function translateText(text) {
       body: JSON.stringify({ text })
     });
     
+    // Check response status
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+    
     const data = await response.json();
     
     if (data.success) {
@@ -235,7 +282,12 @@ async function translateText(text) {
       console.error('Translation failed:', data.error);
     }
   } catch (error) {
-    console.error('Network error:', error);
+    // Handle different error types
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error('Network error. Please check your connection.');
+    } else {
+      console.error('Error:', error.message);
+    }
   }
 }
 ```
@@ -291,31 +343,44 @@ def translate_text(text):
 ```json
 {
   "success": false,
-  "error": "Text is required",
+  "error": "Invalid input. Please check your text and try again.",
   "translatedText": ""
 }
 ```
-**Solution**: Ensure request body contains non-empty "text" field
+**Solution**: Ensure request body contains valid, non-empty "text" field
+
+#### 429 Too Many Requests  
+```json
+{
+  "success": false,
+  "error": "Too many requests. Please wait a moment and try again.",
+  "translatedText": ""
+}
+```
+**Solution**: Wait for the time specified in Retry-After header before making another request
 
 #### 500 Internal Server Error
 ```json
 {
   "success": false,
-  "error": "Failed to translate text",
+  "error": "Service temporarily unavailable. Please try again later.",
   "translatedText": ""
 }
 ```
-**Solution**: Server issue, try again later. API will automatically retry up to 2 times.
+**Solution**: Server issue, API will automatically retry up to 2 times. If persistent, wait a few minutes.
 
-#### Network Timeout
-**Symptom**: Request takes >30 seconds
-**Solution**: Check network connection, API may be overloaded
+#### Network Errors (Chrome on iOS)
+**Symptom**: Requests fail with network errors on Chrome for iOS but work on Safari
+**Solution**: This is now handled with improved CORS headers and error handling
 
 ### Debugging Tips
 1. **Check Request Format**: Ensure JSON is valid
 2. **Verify Content-Type**: Must be `application/json`
 3. **Monitor Retries**: Watch for retry attempts in network tab
-4. **Monitor Console**: Check browser dev tools for errors
+4. **Check Browser Compatibility**: Test in both Chrome and Safari on iOS
+5. **Monitor Console**: Check browser dev tools for specific error messages
+6. **Network Tab**: Look for CORS errors or failed preflight requests
+7. **Rate Limiting**: Check response headers for rate limit information
 
 ---
 

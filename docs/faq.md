@@ -237,8 +237,21 @@ Yes! You can:
 1. **Verify API key**: Is your OpenRouter key valid and active?
 2. **Network issues**: Can you reach openrouter.ai?
 3. **Rate limits**: Have you exceeded the API rate limits?
-4. **Console errors**: Any JavaScript errors in browser?
-5. **Retry**: Try the translation again as retry logic may resolve temporary issues
+4. **Browser compatibility**: Try different browsers (Chrome, Safari, Firefox)
+5. **Console errors**: Any JavaScript errors in browser?
+6. **Retry**: Try the translation again as retry logic may resolve temporary issues
+
+### Browser-specific issues
+**Chrome on iOS not working but Safari on iOS works?**
+- This was a known issue that has been resolved with improved CORS headers
+- Clear browser cache and try again
+- Check for any browser extensions blocking requests
+- Ensure you're on the latest version of Chrome
+
+**Mobile layout issues?**
+- Headline should have proper padding from screen edge
+- If not, try refreshing the page or clearing cache
+- Report layout issues specific to your device/browser
 
 ### Why am I getting American spellings?
 - **AI model**: May default to American English despite prompts
@@ -254,10 +267,11 @@ Yes! You can:
 
 ### Common error messages and solutions:
 - **"Text is required"**: Ensure you've entered text before translating
-- **"Translation failed"**: Try again, retry logic will attempt up to 2 more times
-- **"Network error"**: Check internet connection to OpenRouter API
-- **"Rate limited"**: Wait a moment and try again, or check your API usage limits
-- **"API key invalid"**: Verify your OpenRouter API key is correct and active
+- **"Translation failed. Please try again."**: General error, retry logic will attempt up to 2 more times
+- **"Network error. Please check your connection and try again."**: Internet connectivity issue
+- **"Too many requests. Please wait a moment and try again."**: Rate limiting, wait before retry
+- **"Service temporarily unavailable. Please try again later."**: API service issue
+- **"Invalid input. Please check your text and try again."**: Input validation failed
 
 ## 🤝 Community and Support
 
